@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>后台管理 | Big B Bro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 'header': ['Orbitron', 'sans-serif'], 'mono': ['"JetBrains Mono"', 'monospace'] },
+                    colors: { 'neon-blue': '#00f2ff', 'neon-purple': '#bc13fe', 'dark-bg': '#050505' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background: #050505;
+            background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #050505 60%);
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .input-field {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        .input-field:focus {
+            border-color: #00f2ff;
+            outline: none;
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 16px 24px;
+            border-radius: 8px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="min-h-screen font-mono text-white">
+    <nav class="border-b border-white/10 bg-slate-900/90 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <span class="text-xl font-bold font-header text-neon-blue">ADMIN PANEL</span>
+                <span class="text-slate-500 text-sm">后台管理</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="/" target="_blank" class="text-slate-400 hover:text-neon-blue transition text-sm">
+                    <i class="fa-solid fa-eye mr-1"></i> 预览网站
+                </a>
+                <a href="/admin/logout" class="text-slate-400 hover:text-red-400 transition text-sm">
+                    <i class="fa-solid fa-right-from-bracket mr-1"></i> 退出登录
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-6 py-8">
+        <!-- Tab Navigation -->
+        <div class="flex gap-4 mb-8 border-b border-white/10 pb-4">
+            <button onclick="switchTab('profile')" id="tab-profile"
+                class="tab-btn px-4 py-2 rounded-t font-bold text-neon-blue border-b-2 border-neon-blue">
+                <i class="fa-solid fa-user mr-2"></i>个人信息
+            </button>
+            <button onclick="switchTab('blog')" id="tab-blog"
+                class="tab-btn px-4 py-2 rounded-t text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-newspaper mr-2"></i>博客管理
+            </button>
+        </div>
+
+        <!-- Profile Tab Content -->
+        <div id="content-profile" class="tab-content">
+            <form id="contentForm" class="space-y-8">
+
+                <!-- 个人信息 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-user text-neon-blue"></i> 个人信息
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">名字</label>
+                            <input type="text" name="profile.name" value="{{.Profile.Name}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">副标题</label>
+                            <input type="text" name="profile.subtitle" value="{{.Profile.Subtitle}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">年龄</label>
+                            <input type="text" name="profile.age" value="{{.Profile.Age}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">性别</label>
+                            <input type="text" name="profile.gender" value="{{.Profile.Gender}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">籍贯</label>
+                            <input type="text" name="profile.origin" value="{{.Profile.Origin}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">状态</label>
+                            <input type="text" name="profile.status" value="{{.Profile.Status}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-slate-400 uppercase mb-1">头像 URL</label>
+                            <input type="text" name="profile.avatarUrl" value="{{.Profile.AvatarUrl}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 语录 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-quote-left text-neon-purple"></i> 语录
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">主标语</label>
+                            <input type="text" name="quote.main" value="{{.Quote.Main}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">副标语</label>
+                            <input type="text" name="quote.sub" value="{{.Quote.Sub}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 教育背景 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap text-neon-purple"></i> 教育背景
+                    </h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">学位</label>
+                            <input type="text" name="education.degree" value="{{.Education.Degree}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">学校</label>
+                            <input type="text" name="education.school" value="{{.Education.School}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">描述</label>
+                            <input type="text" name="education.description" value="{{.Education.Description}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 工作经历 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-briefcase text-neon-blue"></i> 工作经历
+                        <button type="button" onclick="addExperience()"
+                            class="ml-auto text-sm bg-neon-blue/20 text-neon-blue px-3 py-1 rounded hover:bg-neon-blue/30 transition">
+                            <i class="fa-solid fa-plus mr-1"></i> 添加
+                        </button>
+                    </h2>
+                    <div id="experienceList" class="space-y-4">
+                        {{range $i, $exp := .Experiences}}
+                        <div class="experience-item bg-slate-800/50 rounded-lg p-4 border border-slate-700"
+                            data-id="{{$exp.ID}}">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <input type="text" name="exp_title" value="{{$exp.Title}}" placeholder="职位"
+                                    class="input-field rounded px-3 py-2 text-white">
+                                <input type="text" name="exp_company" value="{{$exp.Company}}" placeholder="公司"
+                                    class="input-field rounded px-3 py-2 text-white">
+                                <input type="text" name="exp_period" value="{{$exp.Period}}" placeholder="时间"
+                                    class="input-field rounded px-3 py-2 text-white">
+                                <select name="exp_color" class="input-field rounded px-3 py-2 text-white">
+                                    <option value="neon-blue" {{if eq $exp.Color "neon-blue" }}selected{{end}}>蓝色
+                                    </option>
+                                    <option value="neon-purple" {{if eq $exp.Color "neon-purple" }}selected{{end}}>紫色
+                                    </option>
+                                </select>
+                                <textarea name="exp_description" placeholder="描述"
+                                    class="md:col-span-2 input-field rounded px-3 py-2 text-white resize-none"
+                                    rows="2">{{$exp.Description}}</textarea>
+                            </div>
+                            <button type="button" onclick="removeExperience(this)"
+                                class="mt-2 text-red-400 hover:text-red-300 text-sm">
+                                <i class="fa-solid fa-trash mr-1"></i> 删除
+                            </button>
+                        </div>
+                        {{end}}
+                    </div>
+                </section>
+
+                <!-- 技能 - 语言 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-language text-green-400"></i> 语言能力
+                        <button type="button" onclick="addLanguage()"
+                            class="ml-auto text-sm bg-green-500/20 text-green-400 px-3 py-1 rounded hover:bg-green-500/30 transition">
+                            <i class="fa-solid fa-plus mr-1"></i> 添加
+                        </button>
+                    </h2>
+                    <div id="languageList" class="space-y-3">
+                        {{range .Skills.Languages}}
+                        <div class="language-item flex gap-3 items-center">
+                            <input type="text" name="lang_name" value="{{.Name}}" placeholder="语言"
+                                class="flex-1 input-field rounded px-3 py-2 text-white">
+                            <input type="text" name="lang_level" value="{{.Level}}" placeholder="等级"
+                                class="w-32 input-field rounded px-3 py-2 text-white">
+                            <input type="number" name="lang_percent" value="{{.Percent}}" placeholder="%"
+                                class="w-20 input-field rounded px-3 py-2 text-white">
+                            <button type="button" onclick="removeItem(this)" class="text-red-400 hover:text-red-300"><i
+                                    class="fa-solid fa-times"></i></button>
+                        </div>
+                        {{end}}
+                    </div>
+                </section>
+
+                <!-- 技能 - 技术栈 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-code text-yellow-400"></i> 技术栈
+                        <button type="button" onclick="addTech()"
+                            class="ml-auto text-sm bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded hover:bg-yellow-500/30 transition">
+                            <i class="fa-solid fa-plus mr-1"></i> 添加
+                        </button>
+                    </h2>
+                    <div id="techList" class="flex flex-wrap gap-3">
+                        {{range .Skills.TechStack}}
+                        <div class="tech-item flex gap-2 items-center bg-slate-800/50 rounded px-3 py-2">
+                            <input type="text" name="tech_name" value="{{.Name}}" placeholder="技术"
+                                class="w-24 bg-transparent border-b border-slate-600 focus:border-neon-blue outline-none text-white">
+                            <select name="tech_color"
+                                class="bg-transparent border-b border-slate-600 text-white outline-none">
+                                <option value="blue" {{if eq .Color "blue" }}selected{{end}}>蓝</option>
+                                <option value="yellow" {{if eq .Color "yellow" }}selected{{end}}>黄</option>
+                                <option value="green" {{if eq .Color "green" }}selected{{end}}>绿</option>
+                                <option value="purple" {{if eq .Color "purple" }}selected{{end}}>紫</option>
+                                <option value="slate" {{if eq .Color "slate" }}selected{{end}}>灰</option>
+                            </select>
+                            <button type="button" onclick="removeItem(this)" class="text-red-400 hover:text-red-300"><i
+                                    class="fa-solid fa-times"></i></button>
+                        </div>
+                        {{end}}
+                    </div>
+                </section>
+
+                <!-- 联系方式 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-envelope text-neon-blue"></i> 联系方式
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">邮箱</label>
+                            <input type="text" name="contact.email" value="{{.Contact.Email}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">GitHub</label>
+                            <input type="text" name="contact.github" value="{{.Contact.Github}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">LinkedIn</label>
+                            <input type="text" name="contact.linkedin" value="{{.Contact.Linkedin}}"
+                                class="w-full input-field rounded px-3 py-2 text-white">
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 页脚 -->
+                <section class="card rounded-xl p-6">
+                    <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-terminal text-slate-400"></i> 页脚状态
+                    </h2>
+                    <input type="text" name="footer.status" value="{{.Footer.Status}}"
+                        class="w-full input-field rounded px-3 py-2 text-white">
+                </section>
+
+                <!-- 保存按钮 -->
+                <div class="sticky bottom-6 flex justify-end">
+                    <button type="submit"
+                        class="bg-gradient-to-r from-neon-blue to-neon-purple text-black font-bold px-8 py-3 rounded-lg hover:opacity-90 transition transform hover:scale-[1.02] shadow-lg">
+                        <i class="fa-solid fa-save mr-2"></i> 保存所有更改
+                    </button>
+                </div>
+            </form>
+        </div><!-- End Profile Tab -->
+
+        <!-- Blog Tab Content -->
+        <div id="content-blog" class="tab-content hidden">
+            <!-- Blog Header -->
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold text-white">
+                    <i class="fa-solid fa-newspaper text-neon-purple mr-2"></i>文章管理
+                </h2>
+                <button onclick="openPostEditor()"
+                    class="bg-neon-purple/20 text-neon-purple px-4 py-2 rounded hover:bg-neon-purple/30 transition">
+                    <i class="fa-solid fa-plus mr-2"></i>新建文章
+                </button>
+            </div>
+
+            <!-- Posts List -->
+            <div id="postsList" class="space-y-4">
+                <div class="text-center py-12 text-slate-500">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl"></i>
+                    <p class="mt-2">加载中...</p>
+                </div>
+            </div>
+        </div><!-- End Blog Tab -->
+
+        <!-- Post Editor Modal -->
+        <div id="postEditorModal"
+            class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur flex items-center justify-center p-4">
+            <div
+                class="bg-slate-900 border border-white/10 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+                <div class="flex justify-between items-center p-4 border-b border-white/10">
+                    <h3 class="text-lg font-bold text-white" id="editorTitle">新建文章</h3>
+                    <button onclick="closePostEditor()" class="text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-times text-xl"></i>
+                    </button>
+                </div>
+                <div class="p-6 overflow-y-auto flex-1">
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">标题</label>
+                            <input type="text" id="postTitle" class="w-full input-field rounded px-3 py-2 text-white"
+                                placeholder="文章标题">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs text-slate-400 uppercase mb-1">Slug (URL路径)</label>
+                                <input type="text" id="postSlug" class="w-full input-field rounded px-3 py-2 text-white"
+                                    placeholder="auto-generated">
+                            </div>
+                            <div>
+                                <label class="block text-xs text-slate-400 uppercase mb-1">标签 (逗号分隔)</label>
+                                <input type="text" id="postTags" class="w-full input-field rounded px-3 py-2 text-white"
+                                    placeholder="技术,编程,Go">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">摘要</label>
+                            <textarea id="postSummary" rows="2"
+                                class="w-full input-field rounded px-3 py-2 text-white resize-none"
+                                placeholder="文章简介..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">封面图 URL</label>
+                            <input type="text" id="postCover" class="w-full input-field rounded px-3 py-2 text-white"
+                                placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 uppercase mb-1">内容 (Markdown)</label>
+                            <textarea id="postContent" rows="15"
+                                class="w-full input-field rounded px-3 py-2 text-white resize-none font-mono text-sm"
+                                placeholder="# 标题
+
+正文内容...
+
+## 二级标题
+
+- 列表项1
+- 列表项2
+
+**粗体** 和 _斜体_
+
+`代码内联`
+
+```javascript
+// 代码块
+console.log('Hello');
+```"></textarea>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="postPublished" class="rounded">
+                            <label for="postPublished" class="text-slate-300">立即发布</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 p-4 border-t border-white/10">
+                    <button onclick="closePostEditor()"
+                        class="px-4 py-2 text-slate-400 hover:text-white transition">取消</button>
+                    <button onclick="savePost()"
+                        class="bg-gradient-to-r from-neon-blue to-neon-purple text-black font-bold px-6 py-2 rounded hover:opacity-90 transition">
+                        <i class="fa-solid fa-save mr-1"></i>保存
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        let expIdCounter = 100;
+
+        function addExperience() {
+            const list = document.getElementById('experienceList');
+            const html = `
+        <div class="experience-item bg-slate-800/50 rounded-lg p-4 border border-slate-700" data-id="${expIdCounter++}">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <input type="text" name="exp_title" placeholder="职位" class="input-field rounded px-3 py-2 text-white">
+            <input type="text" name="exp_company" placeholder="公司" class="input-field rounded px-3 py-2 text-white">
+            <input type="text" name="exp_period" placeholder="时间" class="input-field rounded px-3 py-2 text-white">
+            <select name="exp_color" class="input-field rounded px-3 py-2 text-white">
+              <option value="neon-blue">蓝色</option>
+              <option value="neon-purple">紫色</option>
+            </select>
+            <textarea name="exp_description" placeholder="描述" class="md:col-span-2 input-field rounded px-3 py-2 text-white resize-none" rows="2"></textarea>
+          </div>
+          <button type="button" onclick="removeExperience(this)" class="mt-2 text-red-400 hover:text-red-300 text-sm">
+            <i class="fa-solid fa-trash mr-1"></i> 删除
+          </button>
+        </div>`;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeExperience(btn) {
+            btn.closest('.experience-item').remove();
+        }
+
+        function addLanguage() {
+            const list = document.getElementById('languageList');
+            const html = `
+        <div class="language-item flex gap-3 items-center">
+          <input type="text" name="lang_name" placeholder="语言" class="flex-1 input-field rounded px-3 py-2 text-white">
+          <input type="text" name="lang_level" placeholder="等级" class="w-32 input-field rounded px-3 py-2 text-white">
+          <input type="number" name="lang_percent" value="80" placeholder="%" class="w-20 input-field rounded px-3 py-2 text-white">
+          <button type="button" onclick="removeItem(this)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+        </div>`;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function addTech() {
+            const list = document.getElementById('techList');
+            const html = `
+        <div class="tech-item flex gap-2 items-center bg-slate-800/50 rounded px-3 py-2">
+          <input type="text" name="tech_name" placeholder="技术" class="w-24 bg-transparent border-b border-slate-600 focus:border-neon-blue outline-none text-white">
+          <select name="tech_color" class="bg-transparent border-b border-slate-600 text-white outline-none">
+            <option value="blue">蓝</option>
+            <option value="yellow">黄</option>
+            <option value="green">绿</option>
+            <option value="purple">紫</option>
+            <option value="slate">灰</option>
+          </select>
+          <button type="button" onclick="removeItem(this)" class="text-red-400 hover:text-red-300"><i class="fa-solid fa-times"></i></button>
+        </div>`;
+            list.insertAdjacentHTML('beforeend', html);
+        }
+
+        function removeItem(btn) {
+            btn.closest('.language-item, .tech-item').remove();
+        }
+
+        function showToast(msg, success = true) {
+            const toast = document.createElement('div');
+            toast.className = `toast ${success ? 'bg-green-500/90 text-white' : 'bg-red-500/90 text-white'}`;
+            toast.innerHTML = `<i class="fa-solid fa-${success ? 'check' : 'xmark'} mr-2"></i>${msg}`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        document.getElementById('contentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const form = e.target;
+
+            // 收集数据
+            const data = {
+                profile: {
+                    name: form.querySelector('[name="profile.name"]').value,
+                    subtitle: form.querySelector('[name="profile.subtitle"]').value,
+                    age: form.querySelector('[name="profile.age"]').value,
+                    gender: form.querySelector('[name="profile.gender"]').value,
+                    origin: form.querySelector('[name="profile.origin"]').value,
+                    status: form.querySelector('[name="profile.status"]').value,
+                    avatarUrl: form.querySelector('[name="profile.avatarUrl"]').value
+                },
+                quote: {
+                    main: form.querySelector('[name="quote.main"]').value,
+                    sub: form.querySelector('[name="quote.sub"]').value
+                },
+                education: {
+                    degree: form.querySelector('[name="education.degree"]').value,
+                    school: form.querySelector('[name="education.school"]').value,
+                    description: form.querySelector('[name="education.description"]').value
+                },
+                experiences: [],
+                skills: { languages: [], techStack: [] },
+                contact: {
+                    email: form.querySelector('[name="contact.email"]').value,
+                    github: form.querySelector('[name="contact.github"]').value,
+                    linkedin: form.querySelector('[name="contact.linkedin"]').value
+                },
+                footer: {
+                    status: form.querySelector('[name="footer.status"]').value
+                }
+            };
+
+            // 工作经历
+            document.querySelectorAll('.experience-item').forEach((item, i) => {
+                data.experiences.push({
+                    id: parseInt(item.dataset.id) || i + 1,
+                    title: item.querySelector('[name="exp_title"]').value,
+                    company: item.querySelector('[name="exp_company"]').value,
+                    period: item.querySelector('[name="exp_period"]').value,
+                    description: item.querySelector('[name="exp_description"]').value,
+                    color: item.querySelector('[name="exp_color"]').value
+                });
+            });
+
+            // 语言
+            document.querySelectorAll('.language-item').forEach(item => {
+                data.skills.languages.push({
+                    name: item.querySelector('[name="lang_name"]').value,
+                    level: item.querySelector('[name="lang_level"]').value,
+                    percent: parseInt(item.querySelector('[name="lang_percent"]').value) || 0
+                });
+            });
+
+            // 技术栈
+            document.querySelectorAll('.tech-item').forEach(item => {
+                data.skills.techStack.push({
+                    name: item.querySelector('[name="tech_name"]').value,
+                    color: item.querySelector('[name="tech_color"]').value
+                });
+            });
+
+            try {
+                const res = await fetch('/api/content', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('保存成功！');
+                } else {
+                    showToast(result.error || '保存失败', false);
+                }
+            } catch (err) {
+                showToast('网络错误', false);
+            }
+        });
+
+        // ============ TAB SWITCHING ============
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('text-neon-blue', 'border-b-2', 'border-neon-blue', 'font-bold');
+                b.classList.add('text-slate-400');
+            });
+
+            document.getElementById('content-' + tab).classList.remove('hidden');
+            const btn = document.getElementById('tab-' + tab);
+            btn.classList.remove('text-slate-400');
+            btn.classList.add('text-neon-blue', 'border-b-2', 'border-neon-blue', 'font-bold');
+
+            if (tab === 'blog') loadPosts();
+        }
+
+        // ============ BLOG MANAGEMENT ============
+        let currentPostId = null;
+        let postsData = [];
+
+        async function loadPosts() {
+            const container = document.getElementById('postsList');
+            try {
+                const res = await fetch('/api/posts');
+                const data = await res.json();
+                postsData = data.posts || [];
+                renderPostsList();
+            } catch (err) {
+                container.innerHTML = '<div class="text-center py-12 text-red-400"><i class="fa-solid fa-exclamation-triangle text-2xl"></i><p class="mt-2">加载失败</p></div>';
+            }
+        }
+
+        function renderPostsList() {
+            const container = document.getElementById('postsList');
+            if (postsData.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fa-solid fa-ghost text-4xl text-slate-700 mb-4"></i>
+                        <p class="text-slate-500">暂无文章</p>
+                        <button onclick="openPostEditor()" class="mt-4 text-neon-purple hover:text-neon-blue transition">
+                            <i class="fa-solid fa-plus mr-1"></i>创建第一篇文章
+                        </button>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = postsData.map(post => `
+                <div class="card rounded-lg p-4 flex items-start gap-4 group">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            ${post.published
+                    ? '<span class="px-2 py-0.5 bg-green-500/20 text-green-400 text-[10px] rounded">已发布</span>'
+                    : '<span class="px-2 py-0.5 bg-yellow-500/20 text-yellow-400 text-[10px] rounded">草稿</span>'
+                }
+                            <span class="text-xs text-slate-500 font-mono">${post.createdAt}</span>
+                        </div>
+                        <h4 class="text-white font-bold truncate">${post.title}</h4>
+                        <p class="text-slate-400 text-sm truncate">${post.summary || '无摘要'}</p>
+                        <div class="flex gap-1 mt-2">
+                            ${(post.tags || []).map(t => `<span class="px-1.5 py-0.5 bg-slate-800 rounded text-[10px] text-slate-400">#${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition">
+                        <a href="/blog/${post.slug}" target="_blank" class="text-slate-400 hover:text-neon-blue" title="预览">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+                        <button onclick="editPost('${post.id}')" class="text-slate-400 hover:text-neon-blue" title="编辑">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button onclick="deletePost('${post.id}')" class="text-slate-400 hover:text-red-400" title="删除">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openPostEditor(post = null) {
+            currentPostId = post ? post.id : null;
+            document.getElementById('editorTitle').textContent = post ? '编辑文章' : '新建文章';
+            document.getElementById('postTitle').value = post ? post.title : '';
+            document.getElementById('postSlug').value = post ? post.slug : '';
+            document.getElementById('postTags').value = post ? (post.tags || []).join(', ') : '';
+            document.getElementById('postSummary').value = post ? post.summary : '';
+            document.getElementById('postCover').value = post ? post.coverImage : '';
+            document.getElementById('postContent').value = post ? post.content : '';
+            document.getElementById('postPublished').checked = post ? post.published : false;
+            document.getElementById('postEditorModal').classList.remove('hidden');
+        }
+
+        function closePostEditor() {
+            document.getElementById('postEditorModal').classList.add('hidden');
+            currentPostId = null;
+        }
+
+        function editPost(id) {
+            const post = postsData.find(p => p.id === id);
+            if (post) openPostEditor(post);
+        }
+
+        async function savePost() {
+            const title = document.getElementById('postTitle').value.trim();
+            if (!title) {
+                showToast('请输入标题', false);
+                return;
+            }
+
+            const tagsStr = document.getElementById('postTags').value;
+            const tags = tagsStr ? tagsStr.split(',').map(t => t.trim()).filter(t => t) : [];
+
+            const postData = {
+                title,
+                slug: document.getElementById('postSlug').value.trim(),
+                tags,
+                summary: document.getElementById('postSummary').value.trim(),
+                coverImage: document.getElementById('postCover').value.trim(),
+                content: document.getElementById('postContent').value,
+                published: document.getElementById('postPublished').checked
+            };
+
+            try {
+                const url = currentPostId ? `/api/posts/${currentPostId}` : '/api/posts';
+                const method = currentPostId ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(postData)
+                });
+                const result = await res.json();
+
+                if (result.success) {
+                    showToast(currentPostId ? '更新成功！' : '创建成功！');
+                    closePostEditor();
+                    loadPosts();
+                } else {
+                    showToast(result.error || '保存失败', false);
+                }
+            } catch (err) {
+                showToast('网络错误', false);
+            }
+        }
+
+        async function deletePost(id) {
+            if (!confirm('确定要删除这篇文章吗？')) return;
+
+            try {
+                const res = await fetch(`/api/posts/${id}`, { method: 'DELETE' });
+                const result = await res.json();
+                if (result.success) {
+                    showToast('删除成功');
+                    loadPosts();
+                } else {
+                    showToast(result.error || '删除失败', false);
+                }
+            } catch (err) {
+                showToast('网络错误', false);
+            }
+        }
+    </script>
+</body>
+
+</html>

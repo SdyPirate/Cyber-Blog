@@ -1,0 +1,91 @@
+/* css/style.css */
+
+body {
+    background-color: #050505;
+    color: #e2e8f0;
+    font-family: 'JetBrains Mono', monospace;
+    /* 深蓝极夜背景 */
+    background-image: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #050505 60%);
+}
+
+/* 扫描线背景效果 */
+.scanlines {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0) 50%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.1));
+    background-size: 100% 4px;
+    z-index: 50;
+    pointer-events: none;
+}
+
+/* 机密信息涂黑效果 (Redacted) */
+.redacted {
+    background-color: #e2e8f0;
+    color: #e2e8f0;
+    cursor: help;
+    position: relative;
+    user-select: none;
+    transition: all 0.2s;
+}
+.redacted:hover {
+    background-color: transparent;
+    color: #94a3b8;
+    text-decoration: line-through;
+}
+.redacted::after {
+    content: 'CONFIDENTIAL';
+    position: absolute;
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%);
+    font-size: 8px; 
+    color: #000; 
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* 头像光圈脉冲 */
+.avatar-glow {
+    box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+    animation: pulse-glow 3s infinite;
+}
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.3); border-color: #00f2ff; }
+    50% { box-shadow: 0 0 60px rgba(188, 19, 254, 0.4); border-color: #bc13fe; }
+}
+
+/* 后台管理样式 */
+.admin-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.admin-input {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+}
+
+.admin-input:focus {
+    border-color: #00f2ff;
+    outline: none;
+}
+
+.admin-btn {
+    background: linear-gradient(to right, #00f2ff, #bc13fe);
+    color: #000;
+    font-weight: bold;
+    padding: 12px 24px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.admin-btn:hover {
+    opacity: 0.9;
+    transform: scale(1.02);
+}

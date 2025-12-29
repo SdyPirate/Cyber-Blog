@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.Post.Title}} | {{.Profile.Name}}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'header': ['Orbitron', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        'neon-blue': '#00f2ff',
+                        'neon-purple': '#bc13fe',
+                        'dark-bg': '#050505',
+                        'card-bg': '#0f172a',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        .article-content pre {
+            background: #1e293b;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
+        .article-content pre code {
+            background: transparent;
+            padding: 0;
+            border: none;
+        }
+
+        .article-content img {
+            max-width: 100%;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .article-content blockquote {
+            border-left: 3px solid #00f2ff;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: #94a3b8;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <div class="scanlines"></div>
+    <canvas id="bg-canvas" class="fixed inset-0 z-0 opacity-40"></canvas>
+
+    <!-- Header -->
+    <header class="relative z-20 border-b border-white/10 bg-slate-900/80 backdrop-blur">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="{{.Profile.AvatarUrl}}" class="w-10 h-10 rounded-full border-2 border-neon-blue" alt="Avatar">
+                <span
+                    class="font-header font-bold text-white group-hover:text-neon-blue transition">{{.Profile.Name}}</span>
+            </a>
+            <nav class="flex gap-6 text-sm">
+                <a href="/" class="text-slate-400 hover:text-neon-blue transition"><i
+                        class="fa-solid fa-home mr-1"></i>首页</a>
+                <a href="/blog" class="text-slate-400 hover:text-neon-blue transition"><i
+                        class="fa-solid fa-newspaper mr-1"></i>博客</a>
+                <a href="/blog/archive" class="text-slate-400 hover:text-neon-blue transition"><i
+                        class="fa-solid fa-archive mr-1"></i>归档</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-4xl mx-auto px-6 py-12 z-10 relative">
+
+        <!-- Article Header -->
+        <article class="bg-slate-900/60 rounded-2xl border border-white/5 overflow-hidden">
+
+            {{if .Post.CoverImage}}
+            <div class="h-64 bg-cover bg-center" style="background-image: url('{{.Post.CoverImage}}')">
+                <div class="w-full h-full bg-gradient-to-t from-slate-900 to-transparent"></div>
+            </div>
+            {{end}}
+
+            <div class="p-8">
+                <!-- Meta -->
+                <div class="flex items-center gap-4 text-sm text-slate-500 mb-4">
+                    <span class="font-mono"><i class="fa-regular fa-calendar mr-1"></i>{{.Post.CreatedAt}}</span>
+                    {{if ne .Post.UpdatedAt .Post.CreatedAt}}
+                    <span class="font-mono text-xs"><i class="fa-solid fa-pen mr-1"></i>更新于 {{.Post.UpdatedAt}}</span>
+                    {{end}}
+                </div>
+
+                <!-- Title -->
+                <h1 class="text-3xl md:text-4xl font-black font-header text-white mb-6 leading-tight">
+                    {{.Post.Title}}
+                </h1>
+
+                <!-- Tags -->
+                <div class="flex flex-wrap gap-2 mb-8">
+                    {{range .Post.Tags}}
+                    <a href="/blog?tag={{.}}"
+                        class="px-3 py-1 bg-slate-800 rounded text-sm text-neon-purple hover:bg-neon-purple hover:text-white transition border border-neon-purple/20">
+                        #{{.}}
+                    </a>
+                    {{end}}
+                </div>
+
+                <!-- Content -->
+                <div class="article-content text-slate-300 leading-relaxed">
+                    {{.Content}}
+                </div>
+            </div>
+        </article>
+
+        <!-- Navigation -->
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            {{if .PrevPost}}
+            <a href="/blog/{{.PrevPost.Slug}}"
+                class="bg-slate-900/60 rounded-xl border border-white/5 hover:border-neon-blue/50 p-4 group transition">
+                <span class="text-xs text-slate-500 uppercase"><i class="fa-solid fa-arrow-left mr-1"></i>上一篇</span>
+                <h4 class="text-white group-hover:text-neon-blue transition font-bold mt-1">{{.PrevPost.Title}}</h4>
+            </a>
+            {{else}}
+            <div></div>
+            {{end}}
+
+            {{if .NextPost}}
+            <a href="/blog/{{.NextPost.Slug}}"
+                class="bg-slate-900/60 rounded-xl border border-white/5 hover:border-neon-purple/50 p-4 group transition text-right">
+                <span class="text-xs text-slate-500 uppercase">下一篇<i class="fa-solid fa-arrow-right ml-1"></i></span>
+                <h4 class="text-white group-hover:text-neon-purple transition font-bold mt-1">{{.NextPost.Title}}</h4>
+            </a>
+            {{else}}
+            <div></div>
+            {{end}}
+        </div>
+
+        <!-- Back to Blog -->
+        <div class="mt-8 text-center">
+            <a href="/blog" class="inline-flex items-center gap-2 text-slate-400 hover:text-neon-blue transition">
+                <i class="fa-solid fa-arrow-left"></i>
+                返回博客列表
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="mt-auto border-t border-white/10 bg-slate-900/90 backdrop-blur pt-6 pb-6 z-20">
+        <div class="max-w-5xl mx-auto px-6 text-center text-xs text-slate-600 font-mono">
+            SYSTEM STATUS: ONLINE | POWERED BY GO + LOVE
+        </div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resize);
+            resize();
+
+            const particles = Array.from({ length: 30 }, () => ({
+                x: Math.random() * w, y: Math.random() * h,
+                speed: Math.random() * 0.3 + 0.1, size: Math.random() * 0.5 + 0.5
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = 'rgba(0, 242, 255, 0.4)';
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.y -= p.speed;
+                    if (p.y < 0) p.y = h;
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+
+</html>

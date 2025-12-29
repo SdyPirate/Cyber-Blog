@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog | {{.Profile.Name}}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'header': ['Orbitron', 'sans-serif'],
+                        'mono': ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        'neon-blue': '#00f2ff',
+                        'neon-purple': '#bc13fe',
+                        'dark-bg': '#050505',
+                        'card-bg': '#0f172a',
+                    },
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+    <div class="scanlines"></div>
+    <canvas id="bg-canvas" class="fixed inset-0 z-0 opacity-40"></canvas>
+
+    <!-- Header -->
+    <header class="relative z-20 border-b border-white/10 bg-slate-900/80 backdrop-blur">
+        <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a href="/" class="flex items-center gap-3 group">
+                <img src="{{.Profile.AvatarUrl}}" class="w-10 h-10 rounded-full border-2 border-neon-blue" alt="Avatar">
+                <span
+                    class="font-header font-bold text-white group-hover:text-neon-blue transition">{{.Profile.Name}}</span>
+            </a>
+            <nav class="flex gap-6 text-sm">
+                <a href="/" class="text-slate-400 hover:text-neon-blue transition"><i
+                        class="fa-solid fa-home mr-1"></i>首页</a>
+                <a href="/blog" class="text-neon-blue"><i class="fa-solid fa-newspaper mr-1"></i>博客</a>
+                <a href="/blog/archive" class="text-slate-400 hover:text-neon-blue transition"><i
+                        class="fa-solid fa-archive mr-1"></i>归档</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-5xl mx-auto px-6 py-12 z-10 relative">
+
+        <!-- Page Title -->
+        <div class="mb-10">
+            <h1
+                class="text-4xl font-black font-header text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple mb-2">
+                <i class="fa-solid fa-terminal mr-3"></i>BLOG
+            </h1>
+            <p class="text-slate-400">
+                {{if .CurrentTag}}
+                <span class="text-neon-purple">#{{.CurrentTag}}</span> 相关文章 ({{.TotalPosts}})
+                <a href="/blog" class="ml-2 text-xs text-slate-500 hover:text-neon-blue">[清除筛选]</a>
+                {{else}}
+                共 {{.TotalPosts}} 篇文章
+                {{end}}
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+
+            <!-- Posts List -->
+            <div class="md:col-span-3 space-y-6">
+                {{if .Posts}}
+                {{range .Posts}}
+                <article
+                    class="bg-slate-900/60 rounded-xl border border-white/5 hover:border-neon-blue/50 transition overflow-hidden group">
+                    <a href="/blog/{{.Slug}}" class="block p-6">
+                        <div class="flex items-start justify-between gap-4 mb-4">
+                            <h2 class="text-xl font-bold text-white group-hover:text-neon-blue transition">
+                                {{.Title}}
+                            </h2>
+                            <span class="text-xs text-slate-500 font-mono whitespace-nowrap">{{.CreatedAt}}</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-4 line-clamp-2">
+                            {{.Summary}}
+                        </p>
+                        <div class="flex items-center gap-2">
+                            {{range .Tags}}
+                            <span
+                                class="px-2 py-0.5 bg-slate-800 rounded text-xs text-neon-purple border border-neon-purple/20">#{{.}}</span>
+                            {{end}}
+                        </div>
+                    </a>
+                </article>
+                {{end}}
+                {{else}}
+                <div class="text-center py-20">
+                    <i class="fa-solid fa-ghost text-6xl text-slate-700 mb-4"></i>
+                    <p class="text-slate-500">暂无文章</p>
+                    <p class="text-slate-600 text-sm mt-2">敬请期待...</p>
+                </div>
+                {{end}}
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="md:col-span-1">
+                <div class="bg-slate-900/60 rounded-xl border border-white/5 p-4 sticky top-6">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase mb-4">
+                        <i class="fa-solid fa-tags mr-2"></i>标签
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        {{range .Tags}}
+                        <a href="/blog?tag={{.}}"
+                            class="px-2 py-1 bg-slate-800 rounded text-xs text-slate-400 hover:text-neon-blue hover:bg-slate-700 transition">
+                            #{{.}}
+                        </a>
+                        {{end}}
+                        {{if not .Tags}}
+                        <span class="text-slate-600 text-xs">暂无标签</span>
+                        {{end}}
+                    </div>
+                </div>
+            </aside>
+
+        </div>
+
+    </main>
+
+    <footer class="mt-auto border-t border-white/10 bg-slate-900/90 backdrop-blur pt-6 pb-6 z-20">
+        <div class="max-w-5xl mx-auto px-6 text-center text-xs text-slate-600 font-mono">
+            SYSTEM STATUS: ONLINE | POWERED BY GO + LOVE
+        </div>
+    </footer>
+
+    <script>
+        const canvas = document.getElementById('bg-canvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+            window.addEventListener('resize', resize);
+            resize();
+
+            const particles = Array.from({ length: 30 }, () => ({
+                x: Math.random() * w, y: Math.random() * h,
+                speed: Math.random() * 0.3 + 0.1, size: Math.random() * 0.5 + 0.5
+            }));
+
+            function animate() {
+                ctx.clearRect(0, 0, w, h);
+                ctx.fillStyle = 'rgba(0, 242, 255, 0.4)';
+                particles.forEach(p => {
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.y -= p.speed;
+                    if (p.y < 0) p.y = h;
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+    </script>
+</body>
+
+</html>

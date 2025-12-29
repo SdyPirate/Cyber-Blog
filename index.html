@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big B Bro | 全栈开发 & 吸钞能力拥有者</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'header': ['Orbitron', 'sans-serif'],
+            'mono': ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            'neon-blue': '#00f2ff',
+            'neon-purple': '#bc13fe',
+            'dark-bg': '#050505',
+            'card-bg': '#0f172a',
+          },
+          animation: {
+            'glitch': 'glitch 1s linear infinite',
+            'scan': 'scan 4s linear infinite',
+          },
+          keyframes: {
+            scan: {
+              '0%': { backgroundPosition: '0% 0%' },
+              '100%': { backgroundPosition: '0% 100%' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <div class="scanlines"></div>
+  <canvas id="bg-canvas" class="fixed inset-0 z-0 opacity-40"></canvas>
+
+  <main class="flex-grow w-full max-w-5xl mx-auto px-6 py-12 z-10 relative">
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      
+      <div class="md:col-span-1 flex flex-col items-center text-center">
+        <div class="relative w-40 h-40 mb-6 group">
+          <div class="absolute inset-0 rounded-full border-2 border-dashed border-neon-blue animate-[spin_10s_linear_infinite] opacity-50"></div>
+          <img src="https://api.dicebear.com/9.x/micah/svg?seed=BigB&backgroundColor=1e293b" 
+               class="w-full h-full rounded-full border-4 border-neon-blue bg-card-bg p-1 avatar-glow relative z-10 transition transform group-hover:scale-105" 
+               alt="Big B">
+          <div class="absolute bottom-2 right-2 bg-green-500 w-4 h-4 rounded-full border-2 border-black z-20" title="Online"></div>
+        </div>
+        
+        <h1 class="text-3xl font-black font-header text-white mb-1">
+          BIG B <span class="text-neon-blue">BRO</span>
+        </h1>
+        <p class="text-slate-400 text-sm mb-6">Full Stack Developer / Hacker</p>
+
+        <div class="w-full bg-slate-900/80 rounded-xl p-4 border border-white/10 text-left space-y-3 shadow-lg">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Age</span>
+            <span class="redacted px-2 rounded text-xs tracking-widest">24 YEARS</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Gender</span>
+            <span class="redacted px-2 rounded text-xs tracking-widest">MALE XX</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Origin</span>
+            <span class="text-neon-blue font-bold text-xs">CN / 拆那</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Status</span>
+            <span class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded text-[10px] font-bold border border-green-500/30 animate-pulse">OPEN FOR WORK</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 flex flex-col justify-center">
+        
+        <div class="mb-10 relative overflow-hidden p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-white/10 group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-neon-blue group-hover:h-full transition-all duration-500"></div>
+          <h2 class="text-2xl md:text-4xl font-black font-header text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple italic mb-2">
+            "经费燃烧，代码狂飙"
+          </h2>
+          <p class="text-slate-400 font-bold text-lg">
+            —— 金钱到位，通宵不睡。
+          </p>
+          <div class="absolute -right-4 -bottom-4 text-9xl opacity-5 text-white font-header rotate-12 select-none">CODE</div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="flex items-center gap-2 text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">
+            <i class="fa-solid fa-graduation-cap text-neon-purple"></i> EDUCATION
+          </h3>
+          
+          <div class="bg-slate-900/60 p-5 rounded-xl border border-white/5 hover:border-neon-purple/50 transition">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="text-lg font-bold text-white">Master of Information Technology</h4>
+                <p class="text-slate-400 text-sm">University of New South Wales (UNSW), Sydney</p>
+              </div>
+              <i class="fa-solid fa-university text-3xl text-slate-700"></i>
+            </div>
+            
+            <div class="mt-4 bg-black/40 rounded p-3 flex items-center gap-3 border border-dashed border-slate-700" id="qs-rank-box">
+              <div class="w-8 h-8 flex items-center justify-center bg-slate-800 rounded">
+                <i class="fa-solid fa-ranking-star text-yellow-500"></i>
+              </div>
+              <div class="flex-1">
+                <div class="text-[10px] text-slate-500 uppercase">Current QS Ranking (Live Fetch)</div>
+                <div class="text-sm text-slate-300">
+                  这所野鸡大学今年的全球排名是：<span id="qs-rank-num" class="text-neon-blue font-bold text-lg animate-pulse">Scanning...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="flex items-center gap-2 text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">
+            <i class="fa-solid fa-briefcase text-neon-blue"></i> EXPERIENCE
+          </h3>
+          
+          <div class="relative pl-6 border-l-2 border-slate-800 space-y-8">
+            <div class="relative group">
+              <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-slate-900 border-2 border-neon-blue group-hover:bg-neon-blue transition"></div>
+              <div class="bg-slate-900/40 p-4 rounded-lg border border-white/5 hover:bg-slate-800/60 transition">
+                <div class="flex justify-between items-start">
+                  <h4 class="font-bold text-white">IT Intern</h4>
+                  <span class="text-xs text-slate-500 font-mono">[202X - 202X]</span>
+                </div>
+                <p class="text-neon-blue text-xs mb-2">Sydney Local IT Company</p>
+                <p class="text-slate-400 text-sm">
+                  在澳洲本土环境下摸鱼...啊不，深入学习全栈开发流程。负责前端页面优化及 coffee fetching。
+                </p>
+              </div>
+            </div>
+
+            <div class="relative group">
+              <div class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-slate-900 border-2 border-slate-600 group-hover:border-neon-purple transition"></div>
+              <div class="bg-slate-900/40 p-4 rounded-lg border border-white/5 hover:bg-slate-800/60 transition">
+                <div class="flex justify-between items-start">
+                  <h4 class="font-bold text-white">Test Engineer Intern</h4>
+                  <span class="text-xs text-slate-500 font-mono">[202X - 202X]</span>
+                </div>
+                <p class="text-neon-purple text-xs mb-2">Top Tier Tech Giant (CN)</p>
+                <p class="text-slate-400 text-sm">
+                  国内某互联网大厂测试岗。熟练掌握 Bug 定位、锅的甩法以及如何在 996 中存活。
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="flex items-center gap-2 text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">
+            <i class="fa-solid fa-code text-green-400"></i> SKILLS & LANG
+          </h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-900/60 p-4 rounded border border-white/5">
+              <h4 class="text-xs text-slate-500 uppercase mb-3">Languages</h4>
+              <div class="space-y-3">
+                <div class="flex justify-between text-sm">
+                  <span>Chinese (Native)</span>
+                  <span class="text-slate-400">Lv. Max</span>
+                </div>
+                <div>
+                  <div class="flex justify-between text-sm mb-1">
+                    <span>English</span>
+                    <span class="text-neon-blue font-bold">IELTS 7.5</span>
+                  </div>
+                  <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-neon-blue h-full w-[85%]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="bg-slate-900/60 p-4 rounded border border-white/5">
+              <h4 class="text-xs text-slate-500 uppercase mb-3">Tech Stack</h4>
+              <div class="flex flex-wrap gap-2">
+                <span class="px-2 py-1 bg-slate-800 rounded text-xs text-blue-400 border border-blue-400/20">React</span>
+                <span class="px-2 py-1 bg-slate-800 rounded text-xs text-yellow-400 border border-yellow-400/20">JS/TS</span>
+                <span class="px-2 py-1 bg-slate-800 rounded text-xs text-green-400 border border-green-400/20">Node.js</span>
+                <span class="px-2 py-1 bg-slate-800 rounded text-xs text-purple-400 border border-purple-400/20">Web3</span>
+                <span class="px-2 py-1 bg-slate-800 rounded text-xs text-slate-300 border border-slate-500/20">Testing</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+  </main>
+
+  <footer class="mt-auto border-t border-white/10 bg-slate-900/90 backdrop-blur pt-8 pb-8 z-20">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <div class="text-left">
+          <div class="text-xs text-slate-500 uppercase">Contact Me</div>
+          <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#97;&#110;&#97;&#122;&#99;&#64;&#100;&#117;&#99;&#107;&#46;&#99;&#111;&#109;" class="text-xl font-bold text-white hover:text-neon-blue transition font-mono tracking-wider">
+            &#97;&#110;&#97;&#122;&#99;&#64;&#100;&#117;&#99;&#107;&#46;&#99;&#111;&#109;
+          </a>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <a href="#" class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-white hover:text-black transition transform hover:-translate-y-1"><i class="fa-brands fa-github text-xl"></i></a>
+        <a href="#" class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#0077b5] hover:text-white transition transform hover:-translate-y-1"><i class="fa-brands fa-linkedin text-xl"></i></a>
+        <a href="index.html" class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-neon-blue hover:text-white transition transform hover:-translate-y-1" title="返回主站"><i class="fa-solid fa-gamepad text-xl"></i></a>
+      </div>
+    </div>
+    <div class="text-center text-[10px] text-slate-600 mt-6 font-mono">
+      SYSTEM STATUS: ONLINE | LOCATION: SYDNEY/CYBERSPACE
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

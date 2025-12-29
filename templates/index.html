@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Big B Bro | 全栈开发 & 吸钞能力拥有者</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=JetBrains+Mono:wght@400;700&display=swap"
+    rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'header': ['Orbitron', 'sans-serif'],
+            'mono': ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            'neon-blue': '#00f2ff',
+            'neon-purple': '#bc13fe',
+            'dark-bg': '#050505',
+            'card-bg': '#0f172a',
+          },
+          animation: {
+            'glitch': 'glitch 1s linear infinite',
+            'scan': 'scan 4s linear infinite',
+          },
+          keyframes: {
+            scan: {
+              '0%': { backgroundPosition: '0% 0%' },
+              '100%': { backgroundPosition: '0% 100%' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
+
+  <div class="scanlines"></div>
+  <canvas id="bg-canvas" class="fixed inset-0 z-0 opacity-40"></canvas>
+
+  <main class="flex-grow w-full max-w-5xl mx-auto px-6 py-12 z-10 relative">
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+      <div class="md:col-span-1 flex flex-col items-center text-center">
+        <div class="relative w-40 h-40 mb-6 group">
+          <div
+            class="absolute inset-0 rounded-full border-2 border-dashed border-neon-blue animate-[spin_10s_linear_infinite] opacity-50">
+          </div>
+          <img src="{{.Profile.AvatarUrl}}"
+            class="w-full h-full rounded-full border-4 border-neon-blue bg-card-bg p-1 avatar-glow relative z-10 transition transform group-hover:scale-105"
+            alt="Avatar">
+          <div class="absolute bottom-2 right-2 bg-green-500 w-4 h-4 rounded-full border-2 border-black z-20"
+            title="Online"></div>
+        </div>
+
+        <h1 class="text-3xl font-black font-header text-white mb-1">
+          {{.Profile.Name}}
+        </h1>
+        <p class="text-slate-400 text-sm mb-6">{{.Profile.Subtitle}}</p>
+
+        <div class="w-full bg-slate-900/80 rounded-xl p-4 border border-white/10 text-left space-y-3 shadow-lg">
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Age</span>
+            <span class="redacted px-2 rounded text-xs tracking-widest">{{.Profile.Age}}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Gender</span>
+            <span class="redacted px-2 rounded text-xs tracking-widest">{{.Profile.Gender}}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Origin</span>
+            <span class="text-neon-blue font-bold text-xs">{{.Profile.Origin}}</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-xs text-slate-500 uppercase">Status</span>
+            <span
+              class="bg-green-500/20 text-green-400 px-2 py-0.5 rounded text-[10px] font-bold border border-green-500/30 animate-pulse">{{.Profile.Status}}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 flex flex-col justify-center">
+
+        <div
+          class="mb-10 relative overflow-hidden p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border border-white/10 group">
+          <div class="absolute top-0 left-0 w-1 h-full bg-neon-blue group-hover:h-full transition-all duration-500">
+          </div>
+          <h2
+            class="text-2xl md:text-4xl font-black font-header text-transparent bg-clip-text bg-gradient-to-r from-neon-blue to-neon-purple italic mb-2">
+            {{.Quote.Main}}
+          </h2>
+          <p class="text-slate-400 font-bold text-lg">
+            {{.Quote.Sub}}
+          </p>
+          <div class="absolute -right-4 -bottom-4 text-9xl opacity-5 text-white font-header rotate-12 select-none">CODE
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="flex items-center gap-2 text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">
+            <i class="fa-solid fa-graduation-cap text-neon-purple"></i> EDUCATION
+          </h3>
+
+          <div class="bg-slate-900/60 p-5 rounded-xl border border-white/5 hover:border-neon-purple/50 transition">
+            <div class="flex justify-between items-start mb-2">
+              <div>
+                <h4 class="text-lg font-bold text-white">{{.Education.Degree}}</h4>
+                <p class="text-slate-400 text-sm">{{.Education.School}}</p>
+              </div>
+              <i class="fa-solid fa-university text-3xl text-slate-700"></i>
+            </div>
+
+            <div class="mt-4 bg-black/40 rounded p-3 flex items-center gap-3 border border-dashed border-slate-700"
+              id="qs-rank-box">
+              <div class="w-8 h-8 flex items-center justify-center bg-slate-800 rounded">
+                <i class="fa-solid fa-ranking-star text-yellow-500"></i>
+              </div>
+              <div class="flex-1">
+                <div class="text-[10px] text-slate-500 uppercase">Current QS Ranking (Live Fetch)</div>
+                <div class="text-sm text-slate-300">
+                  {{.Education.Description}}<span id="qs-rank-num"
+                    class="text-neon-blue font-bold text-lg animate-pulse">Scanning...</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mb-8">
+          <h3 class="flex items-center gap-2 text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">
+            <i class="fa-solid fa-briefcase text-neon-blue"></i> EXPERIENCE
+          </h3>
+
+          <div class="relative pl-6 border-l-2 border-slate-800 space-y-8">
+            {{range .Experiences}}
+            <div class="relative group">
+              <div
+                class="absolute -left-[31px] top-1 w-4 h-4 rounded-full bg-slate-900 border-2 border-{{.Color}} group-hover:bg-{{.Color}} transition">
+              </div>
+              <div class="bg-slate-900/40 p-4 rounded-lg border border-white/5 hover:bg-slate-800/60 transition">
+                <div class="flex justify-between items-start">
+                  <h4 class="font-bold text-white">{{.Title}}</h4>
+                  <span class="text-xs text-slate-500 font-mono">{{.Period}}</span>
+                </div>
+                <p class="text-{{.Color}} text-xs mb-2">{{.Company}}</p>
+                <p class="text-slate-400 text-sm">
+                  {{.Description}}
+                </p>
+              </div>
+            </div>
+            {{end}}
+          </div>
+        </div>
+
+        <div>
+          <h3 class="flex items-center gap-2 text-xl font-bold text-white mb-4 border-b border-white/10 pb-2">
+            <i class="fa-solid fa-code text-green-400"></i> SKILLS & LANG
+          </h3>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-slate-900/60 p-4 rounded border border-white/5">
+              <h4 class="text-xs text-slate-500 uppercase mb-3">Languages</h4>
+              <div class="space-y-3">
+                {{range .Skills.Languages}}
+                <div>
+                  <div class="flex justify-between text-sm mb-1">
+                    <span>{{.Name}}</span>
+                    <span class="text-neon-blue font-bold">{{.Level}}</span>
+                  </div>
+                  {{if lt .Percent 100}}
+                  <div class="w-full bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                    <div class="bg-neon-blue h-full" style="width: {{.Percent}}%"></div>
+                  </div>
+                  {{end}}
+                </div>
+                {{end}}
+              </div>
+            </div>
+
+            <div class="bg-slate-900/60 p-4 rounded border border-white/5">
+              <h4 class="text-xs text-slate-500 uppercase mb-3">Tech Stack</h4>
+              <div class="flex flex-wrap gap-2">
+                {{range .Skills.TechStack}}
+                <span
+                  class="px-2 py-1 bg-slate-800 rounded text-xs text-{{.Color}}-400 border border-{{.Color}}-400/20">{{.Name}}</span>
+                {{end}}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="mt-auto border-t border-white/10 bg-slate-900/90 backdrop-blur pt-8 pb-8 z-20">
+    <div class="max-w-5xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="flex items-center gap-4">
+        <div class="text-left">
+          <div class="text-xs text-slate-500 uppercase">Contact Me</div>
+          <a href="mailto:{{.Contact.Email}}"
+            class="text-xl font-bold text-white hover:text-neon-blue transition font-mono tracking-wider">
+            {{.Contact.Email}}
+          </a>
+        </div>
+      </div>
+
+      <div class="flex gap-4">
+        <a href="{{.Contact.Github}}"
+          class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-white hover:text-black transition transform hover:-translate-y-1"><i
+            class="fa-brands fa-github text-xl"></i></a>
+        <a href="{{.Contact.Linkedin}}"
+          class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-[#0077b5] hover:text-white transition transform hover:-translate-y-1"><i
+            class="fa-brands fa-linkedin text-xl"></i></a>
+        <a href="/blog"
+          class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-neon-purple hover:text-white transition transform hover:-translate-y-1"
+          title="博客"><i class="fa-solid fa-newspaper text-xl"></i></a>
+        <a href="/"
+          class="w-10 h-10 rounded bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-neon-blue hover:text-white transition transform hover:-translate-y-1"
+          title="首页"><i class="fa-solid fa-gamepad text-xl"></i></a>
+      </div>
+    </div>
+    <div class="text-center text-[10px] text-slate-600 mt-6 font-mono">
+      {{.Footer.Status}}
+    </div>
+  </footer>
+
+  <script>
+    // 简化的粒子背景
+    const canvas = document.getElementById('bg-canvas');
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      let w, h;
+      const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
+      window.addEventListener('resize', resize);
+      resize();
+
+      const particles = Array.from({ length: 40 }, () => ({
+        x: Math.random() * w, y: Math.random() * h,
+        speed: Math.random() * 0.3 + 0.1, size: Math.random() * 0.5 + 0.5
+      }));
+
+      function animate() {
+        ctx.clearRect(0, 0, w, h);
+        ctx.fillStyle = 'rgba(0, 242, 255, 0.5)';
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fill();
+          p.y -= p.speed;
+          if (p.y < 0) p.y = h;
+        });
+        requestAnimationFrame(animate);
+      }
+      animate();
+    }
+
+    // 模拟 QS 排名
+    setTimeout(() => {
+      const el = document.getElementById('qs-rank-num');
+      if (el) el.textContent = '#19';
+    }, 1500);
+  </script>
+</body>
+
+</html>
